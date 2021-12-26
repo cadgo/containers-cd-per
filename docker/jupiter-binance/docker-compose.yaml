@@ -1,0 +1,15 @@
+version: '3'
+services:
+  jupyter:
+    image: jupyter-examples
+    build: 
+      context: .
+      args:
+        - AWS_ACCESS=aaaaaaaaa
+        - AWS_SECRET=bbbbbbbbbbbb
+    ports:
+      - "8888:8888"
+    volumes:
+      - jupiter:/home/jovyan/work
+volumes:
+  jupiter:

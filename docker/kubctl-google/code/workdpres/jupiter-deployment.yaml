@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter
+  labels:
+    app: jupyter
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: jupyter
+    tier: frontend
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyter
+  labels:
+    app: jupiter
+spec:
+  replicas: 2
+  selector:
+    matchLabels: 
+      app: jupiter
+      tier: frontend
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: jupiter
+        tier: frontend
+    spec:
+      containers:
+      - image: jupyter/scipy-notebook
+        name: jupiter
+        ports:
+        - containerPort: 8080
+          name: jupiter
+          protocol: TCP
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 8081
+          name: nginx-port
+          protocol: TCP
