@@ -1,3 +1,4 @@
+#AWS ANSIBLE WITH DYNAMIC INVENTORY
 FROM python:latest
 RUN pip install boto boto3 ansible
 RUN ansible-galaxy collection install amazon.aws community.aws
