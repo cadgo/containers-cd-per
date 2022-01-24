@@ -19,7 +19,7 @@ pipeline {
         steps {
             script {
                 try {
-                    sh '/shiftleft/shiftleft image-scan -t 180 -i /bad_images/juice-shop.tar
+                    sh '/shiftleft/shiftleft image-scan -t 180 -i /bad_images/juice-shop.tar'
                 }catch (Exception e){ echo "Request for Approval" }
             }
             }
