@@ -1,3 +1,4 @@
+#https://hub.docker.com/r/bitnami/jenkins
 FROM bitnami/jenkins:latest
 USER 0
 RUN mkdir /bad_images; mkdir /code; mkdir /shiftleft
