@@ -1,0 +1,14 @@
+---
+servers:
+  - www.test1.com:
+      bindSTD: 80
+      bindSSL: 443
+      certpath: /usr/share/nginx/html/anothercert
+      keypath: /usr/share/nginx/html/anotherkey
+      locations:
+        - /
+        - std/
+      upstreamName: test_upstream
+      upstreamList:
+        - http://nginx1
+        - http://nginx2

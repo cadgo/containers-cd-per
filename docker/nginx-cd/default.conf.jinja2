@@ -1,0 +1,57 @@
+{% for server_config in servers %}
+{% for url, config in server_config.items() %}
+
+upstream {{ config.upstreamName }} {
+  {% for upstream in config.upstreamList -%}
+	server {{upstream}};
+  {% endfor %} 
+}
+
+{% if config.bindSTD %}
+server {
+  listen {{config.bindSTD}};
+  server_name {{ url }};
+  gzip on;
+  gzip_proxied  any;
+  gzip_vary on;
+  proxy_http_version 1.1;
+  proxy_set_header Connection "";
+  proxy_set_header  Host $host;
+
+{% for location in config.locations%}
+  location {{location}} {
+      proxy_pass http://{{config.upstreamName}}{%if location == '/'%}/{%else%}/{{location}}{%endif%};
+   } 
+{% endfor %}
+  }
+
+{% endif %}
+{% if config.bindSSL %}
+server {
+  listen {{config.bindSSL}} ssl;
+  server_name {{ url }};
+  ssl_certificate {% if config.certpath %}{{config.certpath}};{% else %}/usr/share/nginx/html/www.cadgonet.io.crt;{% endif %}
+  ssl_certificate_key {% if config.keypath %}{{config.keypath}};{% else %}/usr/share/nginx/html/www.cadgonet.io.key;{% endif %}
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers HIGH:!aNULL:!MD5;
+  
+  keepalive_requests 1000;
+  keepalive_timeout 75 75;
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_timeout 30m;
+  gzip on;
+  gzip_proxied  any;
+  gzip_vary on;
+  proxy_http_version 1.1;
+  proxy_set_header Connection "";
+  proxy_set_header  Host $host;
+
+{% for location in config.locations%}
+  location {{location}} {
+      proxy_pass http://{{config.upstreamName}}{%if location == '/'%}/{%else%}/{{location}}{%endif%};
+  }
+{% endfor %}
+}
+{% endif %}
+{% endfor %}
+{% endfor %}
