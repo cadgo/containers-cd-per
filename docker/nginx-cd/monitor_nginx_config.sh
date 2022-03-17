@@ -5,7 +5,7 @@ FILE=""
 FILE_MD5=""
 LOOP=True
 COMMAND=nginx
-NGINX_CONF=/etc/nginx/conf.d/defualt.conf
+NGINX_CONF=/etc/nginx/conf.d/
 RET=""
 DEFAULT_FILTER="kind=appsec"
 
@@ -39,18 +39,18 @@ function docker_filter_list(){
   then
     echo ""
   else
-    echo $listId
+    echo $listId | sed "s/\"//g" 
   fi
 }
 
 function put_file_in_docker(){
   container=$1
-  echo "container name $container"
   tmp_file=$(mktemp -u)
   TARFILE="$tmp_file.$container.tar"
-  echo "tar file $TARFILE"
   tar -cf "$TARFILE" "$FILE"
-  #curl --unix-socket /var/run/docker.sock -H "Content-Type: application/json" -X PUT "http://localhost/v1.41/containers/769cb917cfe9/archive?path=$NGINX_CONF --data-binary \"@$FILE\""
+  echo "TARFILE: $TARFILE"
+  curl --unix-socket /var/run/docker.sock -H "Content-Type: application/json" -X PUT "http://localhost/v1.41/containers/$container/archive?path=$NGINX_CONF" --data-binary @$TARFILE
+  rm $TARFILE
 }
 
 while getopts "t:f:" options; do
@@ -70,10 +70,12 @@ then
 fi
 nginx_exists
 dockerList=$(docker_filter_list "$DEFAULT_FILTER")
+#echo "docker list $dockerList"
 for cont in $dockerList
 do
-  echo "put file in $cont"
-  put_file_in_docker $cont
+  #echo "put file in $cont"
+  contname=$(echo $cont | cut -b 1-12)
+  put_file_in_docker $contname
 done
 #------ End of validation Stuff
 while [ "$LOOP" ]
