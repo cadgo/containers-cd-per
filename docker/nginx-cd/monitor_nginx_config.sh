@@ -69,14 +69,14 @@ then
  exit 0
 fi
 nginx_exists
-dockerList=$(docker_filter_list "$DEFAULT_FILTER")
-#echo "docker list $dockerList"
-for cont in $dockerList
-do
-  #echo "put file in $cont"
-  contname=$(echo $cont | cut -b 1-12)
-  put_file_in_docker $contname
-done
+#dockerList=$(docker_filter_list "$DEFAULT_FILTER")
+##echo "docker list $dockerList"
+#for cont in $dockerList
+#do
+#  #echo "put file in $cont"
+#  contname=$(echo $cont | cut -b 1-12)
+#  put_file_in_docker $contname
+#done
 #------ End of validation Stuff
 while [ "$LOOP" ]
 do
@@ -85,20 +85,37 @@ do
     echo "first time running obtaining md5"
     nginx_valid_conf
     if [ "$RET" == "0" ]; then
+      dockerList=$(docker_filter_list "$DEFAULT_FILTER")
+      #echo "docker list $dockerList"
+      for cont in $dockerList
+      do
+        #echo "put file in $cont"
+        contname=$(echo $cont | cut -b 1-12)
+        put_file_in_docker $contname
+      done
       FILE_MD5=$(filemd5 $FILE)
       #echo $FILE_MD5
     fi
   else
-    echo "asdasdas"
     NEW_FILE=$(filemd5 $FILE)
     if [ "$NEW_FILE" != "$FILE_MD5" ]
     then
       echo "No son iguales"
       #1 Validar el archivo en el contenedor
-      nginx_valid_config
+      nginx_valid_conf
+      if [ "$RET" == "0" ]; then
+        dockerList=$(docker_filter_list "$DEFAULT_FILTER")
+        #echo "docker list $dockerList"
+        for cont in $dockerList
+        do
+          #echo "put file in $cont"
+          contname=$(echo $cont | cut -b 1-12)
+          put_file_in_docker $contname
+        done
       #2 Si es valido se actualiza el nuevo md5
-      FILE_MD5=$NEW_FILE
+        FILE_MD5=$NEW_FILE
       #3 si no es valido se descarta y se mantiene el Md5 valido
+      fi
     fi
   fi
   sleep $DEFAULT_TIME
