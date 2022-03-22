@@ -53,6 +53,12 @@ function put_file_in_docker(){
   rm $TARFILE
 }
 
+function nginx_restart_signal(){
+  container=$1
+  EXEC_CREATED=$(curl --silent --unix-socket /var/run/docker.sock -H "Content-Type: application/json" -X POST "http://localhost/v1.41/containers/$container/exec" -d '{"AttachStdout": true, "Tty": true, "Cmd": ["nginx", "-s", "reload"]}' | jq -r '.Id')
+  curl --unix-socket /var/run/docker.sock -H "Content-Type: application/json" -X POST "http://localhost/v1.41/exec/$EXEC_CREATED/start" -d '{"Detach": false, "Tty": true}'
+}
+
 while getopts "t:f:" options; do
   case "${options}" in
   t)
@@ -92,6 +98,8 @@ do
         #echo "put file in $cont"
         contname=$(echo $cont | cut -b 1-12)
         put_file_in_docker $contname
+        echo "restarting nginx"
+        nginx_restart_signal $contname
       done
       FILE_MD5=$(filemd5 $FILE)
       #echo $FILE_MD5
@@ -111,6 +119,8 @@ do
           #echo "put file in $cont"
           contname=$(echo $cont | cut -b 1-12)
           put_file_in_docker $contname
+          echo "restarting nginx..."
+          nginx_restart_signal $contname
         done
       #2 Si es valido se actualiza el nuevo md5
         FILE_MD5=$NEW_FILE
