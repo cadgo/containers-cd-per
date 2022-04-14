@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-nginx
+  namespace: nginx1-lab
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - backend:
+              service:
+                name: clusterip-nginx
+                port:
+                  number: 80
+            pathType: Prefix
+            path: /
+        number: 80
