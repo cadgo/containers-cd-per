@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: juicy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dvwa-deployment
+  namespace: juicy
+  labels:
+    app: dvwa-app
+spec:
+  selector:
+    matchLabels:
+      app: dvwa-app
+  replicas: 2
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: dvwa-app
+    spec:
+      containers:
+        - name: dvwa
+          image: vulnerables/web-dvwa
+          ports:
+            - containerPort: 80
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-dvwa
+  namespace: juicy
+spec:
+  selector:
+    app: dvwa-app
+  ports:
+    - port: 3010
+      targetPort: 80
+      protocol: TCP
+  type: ClusterIP
