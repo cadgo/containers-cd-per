@@ -10,7 +10,7 @@ spec:
     - host: juicy-test.io
       http:
         paths:
-        - path: /juicy
+        - path: /
           pathType: Prefix
           backend:
             service:
@@ -18,7 +18,10 @@ spec:
               port: 
                 number: 3000 
                       
-        - path: /dvwa
+    - host: dvwa-test.io
+      http:
+        paths:
+        - path: /
           pathType: Prefix
           backend:
             service:
