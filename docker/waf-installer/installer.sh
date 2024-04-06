@@ -3,11 +3,11 @@
 PACKAGES="git tmux"
 
 LOGFILE=install.log
-PKG = "vim git curl"
+PKG="vim git curl"
 
 logger(){
   d_format="+%F %T"
-  lstring="$(date "$d_format") $@"
+  lstring="$(date "$d_format") [$0] $@"
 
   echo $lstring >> $LOGFILE
 }
@@ -29,4 +29,10 @@ install_docker(){
   apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-compose
 }
 
-logger "hola mundo"
+if (( $EUID != 0 )); then
+  logger "Not running as Root"
+  echo "This script needs run as Root"
+  exit
+fi
+install_core_comp
+install_docker
