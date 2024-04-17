@@ -4,12 +4,23 @@ PACKAGES="git tmux"
 
 LOGFILE=install.log
 PKG="vim git curl"
+DM=http://carlosdiazgonzalez.info
 
 logger(){
   d_format="+%F %T"
   lstring="$(date "$d_format") [$0] $@"
 
   echo $lstring >> $LOGFILE
+}
+
+docker_build_run(){
+  logger "changing domain $DM inside config.py"
+  cat config.py | sed -e 's/\(http\|https\)\:\/\/testdomain\.info/$DM/g' > new_config.py
+  logger "buildikg image"
+  docker build -t waf-comparison .
+  docker run -d waf-comparison
+  logger "Removing new_config"
+  rm new_config.py
 }
 
 install_core_comp(){
@@ -36,3 +47,4 @@ if (( $EUID != 0 )); then
 fi
 install_core_comp
 install_docker
+docker_build_run
