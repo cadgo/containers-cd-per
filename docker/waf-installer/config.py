@@ -15,6 +15,6 @@ MALICIOUS_PATH = DATA_PATH / 'Malicious'
 
 # WAF configuration
 WAFS_DICT = {
-    "open-appsec/CloudGuard AppSec - Critical Profile": 'http://carlosdiazgonzalez.info',
-    "open-appsec/CloudGuard AppSec - Default Profile": 'http://carlosdiazgonzalez.info'
+    "open-appsec/CloudGuard AppSec - Critical Profile": 'http://testdomain.info',
+    "open-appsec/CloudGuard AppSec - Default Profile": 'http://testdomain.info'
 }

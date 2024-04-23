@@ -4,7 +4,7 @@ PACKAGES="git tmux"
 
 LOGFILE=install.log
 PKG="vim git curl"
-DM=http://carlosdiazgonzalez.info
+DM=http://www.mike.com.mx
 
 logger(){
   d_format="+%F %T"
@@ -15,9 +15,10 @@ logger(){
 
 docker_build_run(){
   logger "changing domain $DM inside config.py"
-  cat config.py | sed -e 's/\(http\|https\)\:\/\/testdomain\.info/$DM/g' > new_config.py
-  logger "buildikg image"
+  cat config.py | sed -e "s@\(http\|https\)\:\/\/testdomain\.info@$DM@g" > new_config.py
+  logger "building image"
   docker build -t waf-comparison .
+  logger "Running waf attacks to domain $DM"
   docker run -d waf-comparison
   logger "Removing new_config"
   rm new_config.py
