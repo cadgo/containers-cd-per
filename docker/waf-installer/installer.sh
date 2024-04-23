@@ -4,7 +4,7 @@ PACKAGES="git tmux"
 
 LOGFILE=install.log
 PKG="vim git curl"
-DM=http://www.mike.com.mx
+DM=https://www.mike.com.mx
 
 logger(){
   d_format="+%F %T"
