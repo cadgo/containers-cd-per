@@ -5,6 +5,7 @@ PACKAGES="git tmux"
 LOGFILE=install.log
 PKG="vim git curl"
 DM=https://www.mike.com.mx
+URL_PATTERN='^(http|https)://[a-zA-Z0-9\.-]+\.[a-zA-Z]{2,}(:[0-9]+)?(/.*)?$'
 
 logger(){
   d_format="+%F %T"
@@ -46,6 +47,13 @@ if (( $EUID != 0 )); then
   echo "This script needs run as Root"
   exit
 fi
-install_core_comp
-install_docker
-docker_build_run
+if ! echo "$1" | grep -E "$URL_PATTERN" > /dev/null; then
+  echo "invalid url on the first parameter"
+  exit 0
+else
+  DM=$1
+  install_core_comp
+  install_docker
+  docker_build_run
+  echo "Configuring DM to $DM"
+fi
