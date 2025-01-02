@@ -22,3 +22,11 @@ RUN echo -e '\033[0;37mInstalling neovim on the system' && \
     pacman --noconfirm -U $(ls *.zst) && \
     rm -rf /hone/non_root/neovim && \
     echo -e '\033[0m'
+RUN echo -e '\033[31mCloning configs files' && \
+    git clone https://github.com/cadgo/vim.git && \
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim && \
+    cp vim/tmux.conf ~/.tmux.conf && \
+    mkdir -p ~/.config/nvim && \
+    cp -R vim/nvim/* ~/.config/nvim/ && \
+    cp vim/gitconfig ~/.gitconfig && \
+    echo -e '\033[0m'
