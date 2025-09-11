@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  gather_facts: False
+  tasks:
+   - name: Create AWS Instance
+     community.aws.ec2_instance:
+       name: "Test Instance"
+       key_name: "windowsGames"
+       vpc_subnet_id: subnet-06b98aa281f4421c8
+       instance_type: t2.micro
+       security_group: sg-00b44472daaf96108
+       network:
+         assign_public_ip: true
+       image_id: ami-04fe9398b2a27a600
+       tags:
+         Enviroment: Staging

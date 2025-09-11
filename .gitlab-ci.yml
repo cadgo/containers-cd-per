@@ -1,0 +1,18 @@
+stages:
+  - build_container
+  - acr_upload
+build-nginx:
+  stage: build_container
+  script:
+    - cd docker/simple-nginx-ubuntu/
+    - docker build -t $ACR_NAME/$ACR_IMAGE_NAME:latest . 
+  tags: 
+    - "arch"
+docker_pull:
+  stage: acr_upload
+  script:
+    - docker login -u $ACR_SA_USER -p $ACR_SA_PASS $ACR_URL
+    - echo "$ACR_NAME/$ACR_IMAGE_NAME"
+    - docker push $ACR_NAME/$ACR_IMAGE_NAME:latest
+  tags:
+    - "arch"
